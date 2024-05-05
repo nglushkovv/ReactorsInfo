@@ -38,7 +38,7 @@ public class JSONHandler implements Handler{
                 for (HashMap.Entry<String, Reactor> entry : objects.entrySet()){
                     Reactor reactor = entry.getValue();
                     reactor.setName(entry.getKey());
-                    reactor.setSource("JSON");
+                    reactor.setSource(file.getName());
                     listOfReactors.add(reactor);
                 }
             } catch (Exception ex) {

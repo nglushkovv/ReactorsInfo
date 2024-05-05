@@ -35,7 +35,7 @@ public class XMLHandler implements Handler {
                 for (HashMap.Entry<String, Reactor> entry : objects.entrySet()){
                     Reactor reactor = entry.getValue();
                     reactor.setName(entry.getKey());
-                    reactor.setSource("XML");
+                    reactor.setSource(file.getName());
                     listOfReactors.add(reactor);
                 }
             } catch (Exception ex) {

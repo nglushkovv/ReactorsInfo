@@ -36,7 +36,7 @@ public class YAMLHandler implements Handler {
             for (HashMap.Entry<String, Reactor> entry : objects.entrySet()){
                     Reactor reactor = entry.getValue();
                     reactor.setName(entry.getKey());
-                    reactor.setSource("YAML");
+                    reactor.setSource(file.getName());
                     listOfReactors.add(reactor);
             }
            
