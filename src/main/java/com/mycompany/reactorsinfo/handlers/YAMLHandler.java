@@ -47,7 +47,9 @@ public class YAMLHandler implements Handler {
             
         }
         else{
-            throw new IllegalArgumentException();
+            if(next!=null){
+                next.handle(file);
+            }
         }
         return listOfReactors;
     }

@@ -48,7 +48,10 @@ public class JSONHandler implements Handler{
 
         }
         else{
-            listOfReactors = next.handle(file);
+            if(next!=null){
+                listOfReactors = next.handle(file);
+            }
+            
             
         }
         return listOfReactors;
