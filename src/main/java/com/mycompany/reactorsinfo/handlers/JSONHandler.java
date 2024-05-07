@@ -51,8 +51,6 @@ public class JSONHandler implements Handler{
             if(next!=null){
                 listOfReactors = next.handle(file);
             }
-            
-            
         }
         return listOfReactors;
         
