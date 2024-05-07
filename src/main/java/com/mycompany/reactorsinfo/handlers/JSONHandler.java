@@ -23,7 +23,6 @@ import java.util.logging.Logger;
  * @author 79175
  */
 public class JSONHandler extends Handler{
-    private Handler next;
     
     @Override
     public List<ReactorType> handle(File file){

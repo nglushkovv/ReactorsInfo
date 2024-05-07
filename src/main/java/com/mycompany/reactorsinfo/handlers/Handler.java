@@ -16,6 +16,7 @@ import java.util.Map;
  * @author 79175
  */
 public abstract class Handler {
+    private Handler next;
     
     public abstract List<ReactorType> handle(File file);
     

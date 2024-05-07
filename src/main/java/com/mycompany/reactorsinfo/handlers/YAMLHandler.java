@@ -20,8 +20,6 @@ import java.util.Map;
  * @author 79175
  */
 public class YAMLHandler extends Handler {
-    private Handler next;
-    
     @Override
     public List<ReactorType> handle(File file) {
         List<ReactorType> listOfReactors = new ArrayList<>();

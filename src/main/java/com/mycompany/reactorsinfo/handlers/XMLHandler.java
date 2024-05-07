@@ -19,7 +19,6 @@ import java.util.Map;
  * @author 79175
  */
 public class XMLHandler extends Handler {
-    private Handler next;
     
     @Override
     public List<ReactorType> handle(File file) {
