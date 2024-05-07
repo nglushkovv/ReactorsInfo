@@ -4,7 +4,7 @@
  */
 package com.mycompany.reactorsinfo;
 
-import com.mycompany.reactorsinfo.model.Reactor;
+import com.mycompany.reactorsinfo.model.ReactorType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,31 +14,31 @@ import java.util.List;
  * @author 79175
  */
 public class Repository {
-    private final List<Reactor> listOfReactors = new ArrayList<>();
+    private final List<ReactorType> listOfReactorTypes = new ArrayList<>();
     
-    public Reactor findByName(String name){
+    public ReactorType findByName(String name){
         return null;
     }
     
-    public void addToRepository(List<Reactor> list){
+    public void addToRepository(List<ReactorType> list){
         Boolean key;
         
-        for(Reactor reactor: list){
+        for(ReactorType reactor: list){
             key = true;
-            for(Reactor repositoryReactor: listOfReactors){
+            for(ReactorType repositoryReactor: listOfReactorTypes){
                 if(Arrays.toString(reactor.getAtrributes()).
                         equals(Arrays.toString(repositoryReactor.getAtrributes()))) {
                     key = false;
                 }
             }
             
-            if(key) listOfReactors.add(reactor);
+            if(key) listOfReactorTypes.add(reactor);
             
         }
     }
     
-    public List<Reactor> getListOfReactors() {
-        return listOfReactors;
+    public List<ReactorType> getListOfReactorTypes() {
+        return listOfReactorTypes;
     }
     
     

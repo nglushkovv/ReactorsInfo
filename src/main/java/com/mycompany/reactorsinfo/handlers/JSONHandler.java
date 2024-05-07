@@ -6,12 +6,15 @@ package com.mycompany.reactorsinfo.handlers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mycompany.reactorsinfo.model.Reactor;
+import com.mycompany.reactorsinfo.model.ReactorType;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 
@@ -19,31 +22,27 @@ import java.util.Map;
  *
  * @author 79175
  */
-public class JSONHandler implements Handler{
+public class JSONHandler extends Handler{
     private Handler next;
     
     @Override
-    public List<Reactor> handle(File file){
+    public List<ReactorType> handle(File file){
         
-        List<Reactor> listOfReactors = new ArrayList<>();
+        List<ReactorType> listOfReactors = new ArrayList<>();
         String fileName = file.getName();
        
         if(isSuitableType(fileName)){
             
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                Map<String, Reactor> objects;
-                objects = mapper.readValue(file,  new TypeReference<Map<String, Reactor>>(){});
-                
-                for (HashMap.Entry<String, Reactor> entry : objects.entrySet()){
-                    Reactor reactor = entry.getValue();
-                    reactor.setName(entry.getKey());
-                    reactor.setSource(file.getName());
-                    listOfReactors.add(reactor);
-                }
-            } catch (Exception ex) {
-                throw new IllegalArgumentException();
+                Map<String, ReactorType> objects;
+                objects = mapper.readValue(file,  new TypeReference<Map<String, ReactorType>>(){});
+                listOfReactors = createObjects(objects, fileName);
+            } catch (IOException ex) {
+                Logger.getLogger(JSONHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
+                
+
            
 
         }

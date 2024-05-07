@@ -6,7 +6,7 @@ package com.mycompany.reactorsinfo.handlers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.mycompany.reactorsinfo.model.Reactor;
+import com.mycompany.reactorsinfo.model.ReactorType;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,26 +18,20 @@ import java.util.Map;
  *
  * @author 79175
  */
-public class XMLHandler implements Handler {
+public class XMLHandler extends Handler {
     private Handler next;
     
     @Override
-    public List<Reactor> handle(File file) {
-        List<Reactor> listOfReactors = new ArrayList<>();
+    public List<ReactorType> handle(File file) {
+        List<ReactorType> listOfReactors = new ArrayList<>();
         String fileName = file.getName();
         
         if(isSuitableType(fileName)){
             try {
                 XmlMapper mapper = new XmlMapper();
-                Map<String, Reactor> objects;
-                objects = mapper.readValue(file, new TypeReference<Map<String, Reactor>>() {});
-                
-                for (HashMap.Entry<String, Reactor> entry : objects.entrySet()){
-                    Reactor reactor = entry.getValue();
-                    reactor.setName(entry.getKey());
-                    reactor.setSource(file.getName());
-                    listOfReactors.add(reactor);
-                }
+                Map<String, ReactorType> objects;
+                objects = mapper.readValue(file, new TypeReference<Map<String, ReactorType>>() {});
+                listOfReactors = createObjects(objects, fileName);
             } catch (Exception ex) {
                 throw new IllegalArgumentException();
             }

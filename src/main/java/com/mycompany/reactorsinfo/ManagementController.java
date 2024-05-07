@@ -7,9 +7,9 @@ package com.mycompany.reactorsinfo;
 import com.mycompany.reactorsinfo.handlers.JSONHandler;
 import com.mycompany.reactorsinfo.handlers.XMLHandler;
 import com.mycompany.reactorsinfo.handlers.YAMLHandler;
-import com.mycompany.reactorsinfo.model.Reactor;
+import com.mycompany.reactorsinfo.model.ReactorType;
+import com.mycompany.reactorsinfo.web.WebReader;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,18 +21,20 @@ public final class ManagementController {
     private final XMLHandler xmlHandler;
     private final YAMLHandler yamlHandler;
     private final Repository repository;
+    private final WebReader webReader;
     
     public ManagementController() {
         jsonHandler = new JSONHandler();
         xmlHandler = new XMLHandler();
         yamlHandler = new YAMLHandler();
         repository = new Repository();
+        webReader = new WebReader();
         
         configureHandlers();
     }
     
     public void readFile(File file){
-       List<Reactor> list = jsonHandler.handle(file);
+       List<ReactorType> list = jsonHandler.handle(file);
        repository.addToRepository(list);
        
     }
@@ -45,6 +47,10 @@ public final class ManagementController {
     
     public Repository getRepository() {
         return repository;
+    }
+    
+    public WebReader getWebReader() {
+        return webReader;
     }
     
     

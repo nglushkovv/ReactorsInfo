@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.reactorsinfo;
-import com.mycompany.reactorsinfo.model.Reactor;
+import com.mycompany.reactorsinfo.model.ReactorType;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -94,9 +94,9 @@ public class UserGUI extends javax.swing.JFrame {
     
     private void configureTree() {
         DefaultMutableTreeNode model = new DefaultMutableTreeNode("Реакторы");
-        List<Reactor> listOfReactors = managementController.getRepository().getListOfReactors();
+        List<ReactorType> listOfReactors = managementController.getRepository().getListOfReactorTypes();
         
-        for(Reactor reactor: listOfReactors) {
+        for(ReactorType reactor: listOfReactors) {
             String[] attributes = reactor.getAtrributes();
             DefaultMutableTreeNode reactorNode = new DefaultMutableTreeNode(attributes[0]);
             
@@ -248,7 +248,11 @@ public class UserGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_loadFileButtonActionPerformed
 
     private void instructionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_instructionButtonActionPerformed
-        workingDialog.setVisible(true);
+        try {
+            managementController.getWebReader().readCountriesFromPage();
+        } catch (IOException ex) {
+            Logger.getLogger(UserGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_instructionButtonActionPerformed
 
 
