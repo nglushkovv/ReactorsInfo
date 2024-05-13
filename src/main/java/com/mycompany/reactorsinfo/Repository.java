@@ -16,11 +16,8 @@ import java.util.List;
 public class Repository {
     private final List<ReactorType> listOfReactorTypes = new ArrayList<>();
     
-    public ReactorType findByName(String name){
-        return null;
-    }
     
-    public void addToRepository(List<ReactorType> list){
+    public void addTypeToRepository(List<ReactorType> list){
         Boolean key;
         
         for(ReactorType reactor: list){
@@ -39,6 +36,12 @@ public class Repository {
     
     public List<ReactorType> getListOfReactorTypes() {
         return listOfReactorTypes;
+    }
+    
+    public void createReactor(List<String> attributes) {
+        for(String s: attributes){
+            System.out.println(s);
+        }
     }
     
     

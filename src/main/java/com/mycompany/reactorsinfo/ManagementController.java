@@ -28,14 +28,14 @@ public final class ManagementController {
         xmlHandler = new XMLHandler();
         yamlHandler = new YAMLHandler();
         repository = new Repository();
-        webReader = new WebReader();
+        webReader = new WebReader(repository);
         
         configureHandlers();
     }
     
     public void readFile(File file){
        List<ReactorType> list = jsonHandler.handle(file);
-       repository.addToRepository(list);
+       repository.addTypeToRepository(list);
        
     }
     

@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.reactorsinfo;
+import com.mycompany.reactorsinfo.DBUtil.HibernateSessionFactoryUtil;
 import com.mycompany.reactorsinfo.model.ReactorType;
 import java.io.File;
 import java.io.IOException;
@@ -249,9 +250,11 @@ public class UserGUI extends javax.swing.JFrame {
 
     private void instructionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_instructionButtonActionPerformed
         try {
-            managementController.getWebReader().readCountriesFromPage();
+            HibernateSessionFactoryUtil.getSessionFactory().openSession();
+            managementController.getWebReader().start();
+            
         } catch (IOException ex) {
-            Logger.getLogger(UserGUI.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
     }//GEN-LAST:event_instructionButtonActionPerformed
 

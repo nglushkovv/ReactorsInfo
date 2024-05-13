@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- JDBC Database connection settings -->
+        <property name="connection.driver_class">org.sqlite.JDBC</property>
+        <property name="connection.url">jdbc:sqlite:ReactorsInfo.db</property>
+        <property name="connection.username"></property>
+        <property name="connection.password"></property>
+
+
+        <!-- JDBC connection pool settings (use the built-in) -->
+        <!-- <property name="hibernate.connection.pool_size">1</property> -->
+
+        <!-- Specifies the SQL dialect -->
+        <property name="dialect">org.hibernate.dialect.SQLiteDialect</property>
+
+        <!-- Echo all executed SQL to stdout -->
+        <property name="show_sql">true</property>
+
+        <!-- Drop and re-create the database schema on startup -->
+        <property name="hbm2ddl.auto">create</property>
+
+        <!-- Mapping files -->
+        <!-- Add your mapping files here -->
+       
+	<mapping class="com.mycompany.reactorsinfo.model.ReactorType"/>
+        <mapping class="com.mycompany.reactorsinfo.model.Reactor"/>
+
+    </session-factory>
+</hibernate-configuration>

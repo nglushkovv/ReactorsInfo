@@ -6,18 +6,34 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "ReactorType")
 @JacksonXmlRootElement(localName = "root")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ReactorType {
+    
     private String name;
+    @Id
+    @Column(name = "class")
     private final String reactorsClass;
+    @Column
     private final Double burnup;
+    @Column
     private final Double kpd;
+    @Column
     private final Double enrichment;
+    @Column
     private final Double termalCapacity;
+    @Column
     private final Double electricalCapacity;
+    @Column
     private final Double lifeTime;
+    @Column
     private final Double firstLoad;
     private String source;
     
