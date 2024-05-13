@@ -8,9 +8,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.mycompany.reactorsinfo.model.ReactorType;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -21,30 +18,17 @@ import java.util.Map;
 public class XMLHandler extends Handler {
     
     @Override
-    public List<ReactorType> handle(File file) {
-        List<ReactorType> listOfReactors = new ArrayList<>();
-        String fileName = file.getName();
-        
-        if(isSuitableType(fileName)){
+    public Map<String, ReactorType> readFile(File file) {
             try {
                 XmlMapper mapper = new XmlMapper();
                 Map<String, ReactorType> objects;
                 objects = mapper.readValue(file, new TypeReference<Map<String, ReactorType>>() {});
-                listOfReactors = createObjects(objects, fileName);
+                return objects;
             } catch (Exception ex) {
                 throw new IllegalArgumentException();
             }
-           
-        }
-        else{
-            if(next!=null){
-                listOfReactors = next.handle(file);
-            }
-            
-        }
-    
-    return listOfReactors;
     }
+
     
     
     @Override

@@ -6,12 +6,11 @@ package com.mycompany.reactorsinfo.web;
 
 import com.mycompany.reactorsinfo.Repository;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -94,6 +93,7 @@ public class WebReader {
                     attributes.add(elem.text());
                 }
                 counter += 1;
+                workWithAdditionalDataPages();
                 System.out.println("------------------------------------");
                 attributes.add(country.getKey());
                 repository.createReactor(attributes);
@@ -104,19 +104,22 @@ public class WebReader {
     
     }
     
-    public void workWithAdditionalDataPages() {
+    public void workWithAdditionalDataPages() throws IOException {
+        int counter = 0;
+        
+        }
         
     }
     
     
-    
+
    
     
 
 
         
     
-}
+
 
 
 

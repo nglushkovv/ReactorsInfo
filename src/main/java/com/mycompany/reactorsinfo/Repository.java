@@ -39,8 +39,9 @@ public class Repository {
     }
     
     public void createReactor(List<String> attributes) {
+        
         for(String s: attributes){
-            System.out.println(s);
+           System.out.println(s); 
         }
     }
     

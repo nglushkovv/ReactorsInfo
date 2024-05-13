@@ -25,42 +25,30 @@ import java.util.logging.Logger;
 public class JSONHandler extends Handler{
     
     @Override
-    public List<ReactorType> handle(File file){
+    public Map<String, ReactorType> readFile(File file){        
         
-        List<ReactorType> listOfReactors = new ArrayList<>();
-        String fileName = file.getName();
-       
-        if(isSuitableType(fileName)){
-            
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                Map<String, ReactorType> objects;
-                objects = mapper.readValue(file,  new TypeReference<Map<String, ReactorType>>(){});
-                listOfReactors = createObjects(objects, fileName);
-            } catch (IOException ex) {
-                Logger.getLogger(JSONHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, ReactorType> objects;
+            objects = mapper.readValue(file,  new TypeReference<Map<String, ReactorType>>(){});
+            return objects;
                 
-
-           
-
-        }
-        else{
-            if(next!=null){
-                listOfReactors = next.handle(file);
-            }
-        }
-        return listOfReactors;
+       } catch (IOException ex) {
+            Logger.getLogger(JSONHandler.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IllegalArgumentException();
         
-       
+       }
         
-    };
+    }
     
 
     @Override
     public Boolean isSuitableType(String fileName) {
         return "json".equals(fileName.substring(fileName.indexOf(".")+1));
     }
-    
-    
 }
+    
+    
+
+
+

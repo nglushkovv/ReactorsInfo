@@ -20,30 +20,22 @@ import java.util.Map;
  */
 public class YAMLHandler extends Handler {
     @Override
-    public List<ReactorType> handle(File file) {
-        List<ReactorType> listOfReactors = new ArrayList<>();
-        String fileName = file.getName();
+    public Map<String, ReactorType> readFile(File file){
         
-        if(isSuitableType(fileName)){
+        try {
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
             Map<String, ReactorType> objects;
-            try {
-                objects = mapper.readValue(file,  new TypeReference<Map<String, ReactorType>>(){});
-                listOfReactors = createObjects(objects, fileName);
+            objects = mapper.readValue(file,  new TypeReference<Map<String, ReactorType>>(){});
+            return objects;
+                
            
-            } catch (Exception ex) {
-               throw new IllegalArgumentException();
-                    
-            }
+        } catch (Exception ex) {
+            throw new IllegalArgumentException();
             
         }
-        else{
-            if(next!=null){
-                next.handle(file);
-            }
-        }
-        return listOfReactors;
+
     }
+    
     
     
     @Override

@@ -129,12 +129,12 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.6.15.Final</version>
         </dependency>
-
-
-
         
-
-
+        <dependency>
+            <groupId>org.htmlunit</groupId>
+            <artifactId>htmlunit</artifactId>
+            <version>4.1.0</version>
+        </dependency>
 
         
     </dependencies>

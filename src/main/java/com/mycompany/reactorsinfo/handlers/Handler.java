@@ -18,7 +18,7 @@ import java.util.Map;
 public abstract class Handler {
     Handler next;
     
-    public abstract List<ReactorType> handle(File file);
+    public abstract Map<String, ReactorType> readFile(File file);
     
     public abstract Boolean isSuitableType(String filename);
     
@@ -30,6 +30,23 @@ public abstract class Handler {
                     reactor.setSource(fileName);
                     listOfReactors.add(reactor);
             }
+        return listOfReactors;
+    }
+    
+    public List<ReactorType> handle(File file){
+        List<ReactorType> listOfReactors = new ArrayList<>();
+        String fileName = file.getName();
+       
+        if(isSuitableType(fileName)){
+            Map<String, ReactorType> objects = this.readFile(file);
+            listOfReactors = createObjects(objects, fileName);
+        }
+         
+        else{
+            if(next!=null){
+                listOfReactors = next.handle(file);
+            }
+        }
         return listOfReactors;
     }
     
