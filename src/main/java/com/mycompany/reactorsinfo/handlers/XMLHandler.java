@@ -46,10 +46,6 @@ public class XMLHandler extends Handler {
     return listOfReactors;
     }
     
-    @Override
-    public void setNext(Handler handler) {
-        next = handler;
-    }
     
     @Override
     public Boolean isSuitableType(String fileName) {

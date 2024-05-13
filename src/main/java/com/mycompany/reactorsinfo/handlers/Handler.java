@@ -16,11 +16,9 @@ import java.util.Map;
  * @author 79175
  */
 public abstract class Handler {
-    private Handler next;
+    Handler next;
     
     public abstract List<ReactorType> handle(File file);
-    
-    public abstract void setNext(Handler handler);
     
     public abstract Boolean isSuitableType(String filename);
     
@@ -33,5 +31,9 @@ public abstract class Handler {
                     listOfReactors.add(reactor);
             }
         return listOfReactors;
+    }
+    
+    public void setNext(Handler handler) {
+        next = handler;
     }
 }

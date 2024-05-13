@@ -11,7 +11,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.mycompany.reactorsinfo.model.ReactorType;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,10 +45,6 @@ public class YAMLHandler extends Handler {
         return listOfReactors;
     }
     
-    @Override
-    public void setNext(Handler handler) {
-        next = handler;
-    }
     
     @Override
     public Boolean isSuitableType(String fileName) {

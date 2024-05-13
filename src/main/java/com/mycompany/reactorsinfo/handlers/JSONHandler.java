@@ -56,10 +56,6 @@ public class JSONHandler extends Handler{
         
     };
     
-    @Override
-    public void setNext(Handler handler){
-        next = handler;
-    }
 
     @Override
     public Boolean isSuitableType(String fileName) {
