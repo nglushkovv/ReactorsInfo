@@ -4,7 +4,6 @@
  */
 package com.mycompany.reactorsinfo.model;
 
-import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,8 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+
 
 
 /**
@@ -49,19 +47,20 @@ public class Reactor {
     @Column
     private Date firstGridConnection;
     
-    @Column
-    private String country;
+    @ManyToOne
+    @JoinColumn(name = "country")
+    private Country country;
     @Column
     private String owner;
     @Column
     private String operator;
     @Column
     private Double termalCapacity;
-    @Column
-    private Double loadFactor;
+
+    public Reactor() {}
     
     public Reactor(String name,
-                   String type,
+                   ReactorType type,
                    String status,
                    String location,
                    Integer referenceUnitPower,
@@ -70,8 +69,19 @@ public class Reactor {
                    String owner,
                    String operator,
                    Double termalCapacity,
-                   Double loadFactor){
-        
+                   Country country
+                   ){
+        this.name = name;
+        this.type = type;
+        this.status = status;
+        this.location = location;
+        this.referenceUnitPower = referenceUnitPower;
+        this.grossElectricalCapacity = grossElectricalCapacity;
+        this.firstGridConnection = firstGridConnection;
+        this.owner = owner;
+        this.operator = operator;
+        this.termalCapacity = termalCapacity;
+        this.country = country;
         
     }
     

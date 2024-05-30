@@ -4,13 +4,19 @@
  */
 package com.mycompany.reactorsinfo;
 
+import com.mycompany.reactorsinfo.DBUtil.HibernateSessionFactoryUtil;
 import com.mycompany.reactorsinfo.handlers.JSONHandler;
 import com.mycompany.reactorsinfo.handlers.XMLHandler;
 import com.mycompany.reactorsinfo.handlers.YAMLHandler;
 import com.mycompany.reactorsinfo.model.ReactorType;
+import com.mycompany.reactorsinfo.services.CountryService;
+import com.mycompany.reactorsinfo.services.ReactorService;
 import com.mycompany.reactorsinfo.web.WebReader;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 /**
  *
@@ -20,22 +26,56 @@ public final class ManagementController {
     private final JSONHandler jsonHandler;
     private final XMLHandler xmlHandler;
     private final YAMLHandler yamlHandler;
-    private final Repository repository;
+    private final ReactorService reactorService;
+    private final CountryService countryService;
     private final WebReader webReader;
+    private Boolean databaseMode = false;
+    private TaskRunner taskRunner;
     
     public ManagementController() {
         jsonHandler = new JSONHandler();
         xmlHandler = new XMLHandler();
         yamlHandler = new YAMLHandler();
-        repository = new Repository();
-        webReader = new WebReader(repository);
-        
+        reactorService = new ReactorService();
+        webReader = new WebReader(reactorService);
+        countryService = new CountryService();
         configureHandlers();
     }
     
+    public void startDatabaseMode(String mode) throws IOException {
+        databaseMode = true;
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        reactorService.createReactorsRepository(session);
+        countryService.createCountryRepository(session);
+        taskRunner = new TaskRunner(reactorService, countryService);
+        
+        switch(mode){
+
+            case "CREATE":
+                countryService.fillCountryTable();
+
+                Transaction transaction = session.beginTransaction();
+                reactorService.addTypesToRepository();
+                reactorService.setCountryRepository(countryService.getRepository());
+                webReader.start();
+                transaction.commit();
+                
+                break;
+            case "UPDATE":
+                reactorService.addTypesToRepository();
+                break;
+        }
+            
+        }
+    
+    
+    
+    
+    
     public void readFile(File file){
        List<ReactorType> list = jsonHandler.handle(file);
-       repository.addTypeToRepository(list);
+       reactorService.addTypesToList(list);
+       
        
     }
     
@@ -45,13 +85,16 @@ public final class ManagementController {
         
     }
     
-    public Repository getRepository() {
-        return repository;
-    }
-    
     public WebReader getWebReader() {
         return webReader;
     }
+
+    public ReactorService getReactorService() {
+        return reactorService;
+    }
     
+    public TaskRunner getTaskRunner() {
+        return taskRunner;
+    }
     
 }

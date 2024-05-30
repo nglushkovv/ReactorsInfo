@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.reactorsinfo;
-import com.mycompany.reactorsinfo.DBUtil.HibernateSessionFactoryUtil;
 import com.mycompany.reactorsinfo.model.ReactorType;
 import java.io.File;
 import java.io.IOException;
@@ -16,9 +15,11 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
@@ -28,6 +29,9 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  */
 public class UserGUI extends javax.swing.JFrame {
     private ManagementController managementController;
+    private Timer timer;
+    private Integer progressValue;
+    private Thread mainThread = new Thread();
 
     /**
      * Creates new form UserGUI
@@ -35,6 +39,7 @@ public class UserGUI extends javax.swing.JFrame {
      */
     public UserGUI(ManagementController managementController) {
         try {
+            
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
             ImageIcon icon = new ImageIcon(this.getClass().getResource("/logo.png"));
             this.setIconImage(icon.getImage());
@@ -50,6 +55,7 @@ public class UserGUI extends javax.swing.JFrame {
         
        
     }
+    
     
     private void configureTreeUI() {
         Icon expandedIcon = new ImageIcon(this.getClass().getResource("/reactorIcon.png"));
@@ -69,33 +75,43 @@ public class UserGUI extends javax.swing.JFrame {
             configureFileChooser();
             configureTree();
             configureDialog();
+            
         } catch (IOException ex) {
             Logger.getLogger(UserGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
+    private void configureTable() {
+        databaseModeTable.setDefaultEditor(Object.class, null);
+        
+        int type = optionsComboBox.getSelectedIndex();
+        DefaultTableModel model = managementController.getTaskRunner().prepareTableModel(type);
+        databaseModeTable.setModel(model);
+        databaseModeTable.repaint();
+    }
+    
+    
     private void configureImages() throws IOException{
         URL inputStream = this.getClass().getResource("/atomPic.png");
          ImageIcon logoImage = new ImageIcon(inputStream);
          imageLabel.setIcon(logoImage);
-         
-         
+        
+        
     }
     
     private void configureDialog() {
         
-        workingDialog.setSize(800, 800);
-        workingDialog.setLocationRelativeTo(null);
-        workingDialog.setTitle("Ведутся программные работы по написанию 4 лабы...");
-        workingDialog.setIconImage(this.getIconImage());
-        URL inputStream = this.getClass().getResource("/working.gif");
-        ImageIcon logoImage = new ImageIcon(inputStream);
-        workingPic.setIcon(logoImage);
+        databaseModeDialog.setSize(700, 550);
+        databaseModeDialog.setLocationRelativeTo(null);
+        databaseModeDialog.setTitle("Режим работы с БД");
+        
+        
+        
     }
     
     private void configureTree() {
         DefaultMutableTreeNode model = new DefaultMutableTreeNode("Реакторы");
-        List<ReactorType> listOfReactors = managementController.getRepository().getListOfReactorTypes();
+        List<ReactorType> listOfReactors = managementController.getReactorService().getListOfReactorTypes();
         
         for(ReactorType reactor: listOfReactors) {
             String[] attributes = reactor.getAtrributes();
@@ -136,7 +152,11 @@ public class UserGUI extends javax.swing.JFrame {
         fileChooser = new javax.swing.JFileChooser();
         workingDialog = new javax.swing.JDialog();
         workingPic = new javax.swing.JLabel();
-        workingLabel = new javax.swing.JLabel();
+        dropProcessButton = new javax.swing.JButton();
+        databaseModeDialog = new javax.swing.JDialog();
+        scrollPaneDialog = new javax.swing.JScrollPane();
+        databaseModeTable = new javax.swing.JTable();
+        optionsComboBox = new javax.swing.JComboBox<>();
         mainPanel = new javax.swing.JPanel();
         mainTabbedPane = new javax.swing.JTabbedPane();
         treeTabPanel = new javax.swing.JScrollPane();
@@ -144,7 +164,6 @@ public class UserGUI extends javax.swing.JFrame {
         labelPanel = new javax.swing.JPanel();
         reactorsInfoLabel = new javax.swing.JLabel();
         loadFileButton = new javax.swing.JButton();
-        instructionButton = new javax.swing.JButton();
         imageLabel = new javax.swing.JLabel();
         databaseModeButton = new javax.swing.JButton();
 
@@ -157,12 +176,40 @@ public class UserGUI extends javax.swing.JFrame {
         workingPic.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         workingDialog.getContentPane().add(workingPic, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 20, 800, 600));
 
-        workingLabel.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
-        workingLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        workingLabel.setText("Ведутся программные работы...");
-        workingDialog.getContentPane().add(workingLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 640, 390, 70));
+        dropProcessButton.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        dropProcessButton.setText("Прервать процесс создания БД");
+        dropProcessButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dropProcessButtonActionPerformed(evt);
+            }
+        });
+        workingDialog.getContentPane().add(dropProcessButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 660, 320, 50));
 
         workingDialog.getAccessibleContext().setAccessibleParent(mainPanel);
+
+        databaseModeDialog.setBackground(new java.awt.Color(102, 153, 255));
+        databaseModeDialog.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        databaseModeTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        scrollPaneDialog.setViewportView(databaseModeTable);
+
+        databaseModeDialog.getContentPane().add(scrollPaneDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 51, 640, 410));
+
+        optionsComboBox.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        optionsComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Суммарное потребление по регионам", "Суммарное потребление по странам", "Суммарное потребление по компаниям", "Объем ежегодного потребления реактором топлива" }));
+        optionsComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                optionsComboBoxActionPerformed(evt);
+            }
+        });
+        databaseModeDialog.getContentPane().add(optionsComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, 530, 30));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(51, 102, 255));
@@ -197,15 +244,7 @@ public class UserGUI extends javax.swing.JFrame {
                 loadFileButtonActionPerformed(evt);
             }
         });
-        labelPanel.add(loadFileButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 380, 170, -1));
-
-        instructionButton.setText("Инструкция");
-        instructionButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                instructionButtonActionPerformed(evt);
-            }
-        });
-        labelPanel.add(instructionButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 410, 170, -1));
+        labelPanel.add(loadFileButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 400, 170, -1));
 
         imageLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labelPanel.add(imageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, 190, 200));
@@ -227,9 +266,95 @@ public class UserGUI extends javax.swing.JFrame {
 
     
     private void databaseModeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_databaseModeButtonActionPerformed
-        workingDialog.setVisible(true);
+        
+        try {
+            
+            if(checkDatabaseFile()) {
+                managementController.startDatabaseMode("UPDATE");
+                databaseModeDialog.setVisible(true);
+                configureTable();
+                
+            }
+            else{
+                if(mainThread != null || mainThread.isAlive()){
+                    mainThread.interrupt();
+                }
+                int dialogResult = JOptionPane.showConfirmDialog(rootPane,
+                "База данных не обнаружена на локальном компьютере. "
+                        + "Хотите ли вы создать её и заполнить? (Это займёт некоторое время)", "База данных не найдена", JOptionPane.YES_NO_OPTION);
+                if(dialogResult == JOptionPane.YES_OPTION){
+                    if(managementController.getReactorService().getListOfReactorTypes().isEmpty()){
+                        JOptionPane.showMessageDialog(rootPane, "Ошибка."
+                                + " Перед началом загрузите информацию о типе реакторов.",
+                                "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    } else{
+                        System.out.println("Начался процесс парсинга и создания БД. В идеале он займет 16-17 минут.");
+                        mainThread = new Thread() {
+                            public void run() {
+                                try {
+                                    databaseModeButton.setEnabled(false);
+                                    managementController.startDatabaseMode("CREATE");
+                                    databaseModeDialog.setVisible(true);
+                                    configureTable();
+                                    databaseModeButton.setEnabled(true);
+                                } catch (IOException ex) {
+                                    JOptionPane.showMessageDialog(rootPane, "Ошибка."
+                    + "Непредвиденная ошибка. Попробуйте снова.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        };
+                        mainThread.start();
+ 
+                    }
+      
+                    
+                }
+                
+            }
+            
+        } catch (IOException ex) {
+             JOptionPane.showMessageDialog(rootPane, "Ошибка."
+                    + "Непредвиденная ошибка. Попробуйте снова.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+        
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(rootPane, "Ошибка."
+                    + " База данных в данный момент уже используется.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+        
     }//GEN-LAST:event_databaseModeButtonActionPerformed
 
+    
+    
+    
+    
+    
+    private Boolean checkDatabaseFile() {
+        try {
+            
+            File dbFile = new File(getClass().getProtectionDomain()
+                    .getCodeSource().getLocation().toURI().getPath() + "../ReactorInfo.mv.db");
+            if(dbFile.exists()){
+                return true;
+            }
+            else{
+                return false;
+            }
+            
+            
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(UserGUI.class.getName()).log(Level.SEVERE, null, ex);
+            
+        }
+        return false;
+    }
+    
+    private void doDatabaseModeChanges() {
+        databaseModeDialog.setVisible(true);
+        databaseModeDialog.setSize(750, 500);
+    }
+    
+    
     private void loadFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFileButtonActionPerformed
         int returnValue = fileChooser.showOpenDialog(rootPane);
         
@@ -248,32 +373,34 @@ public class UserGUI extends javax.swing.JFrame {
               
     }//GEN-LAST:event_loadFileButtonActionPerformed
 
-    private void instructionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_instructionButtonActionPerformed
-        try {
-            HibernateSessionFactoryUtil.getSessionFactory().openSession();
-            managementController.getWebReader().start();
-            
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }//GEN-LAST:event_instructionButtonActionPerformed
+    private void optionsComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsComboBoxActionPerformed
+        configureTable();
+        
+    }//GEN-LAST:event_optionsComboBoxActionPerformed
+
+    private void dropProcessButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dropProcessButtonActionPerformed
+        mainThread.interrupt();
+    }//GEN-LAST:event_dropProcessButtonActionPerformed
 
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton databaseModeButton;
+    private javax.swing.JDialog databaseModeDialog;
+    private javax.swing.JTable databaseModeTable;
+    private javax.swing.JButton dropProcessButton;
     private javax.swing.JFileChooser fileChooser;
     private javax.swing.JLabel imageLabel;
     private javax.swing.JTree infoTree;
-    private javax.swing.JButton instructionButton;
     private javax.swing.JPanel labelPanel;
     private javax.swing.JButton loadFileButton;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTabbedPane mainTabbedPane;
+    private javax.swing.JComboBox<String> optionsComboBox;
     private javax.swing.JLabel reactorsInfoLabel;
+    private javax.swing.JScrollPane scrollPaneDialog;
     private javax.swing.JScrollPane treeTabPanel;
     private javax.swing.JDialog workingDialog;
-    private javax.swing.JLabel workingLabel;
     private javax.swing.JLabel workingPic;
     // End of variables declaration//GEN-END:variables
 }

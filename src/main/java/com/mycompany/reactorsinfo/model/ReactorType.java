@@ -10,7 +10,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.Setter;
 
+@Setter
 @Entity
 @Table(name = "ReactorType")
 @JacksonXmlRootElement(localName = "root")
@@ -18,24 +20,27 @@ import javax.persistence.Table;
 public class ReactorType {
     
     private String name;
-    @Id
+    
     @Column(name = "class")
-    private final String reactorsClass;
+    @Id
+    private String reactorsClass;
     @Column
-    private final Double burnup;
+    private Double burnup;
     @Column
-    private final Double kpd;
+    private Double kpd;
     @Column
-    private final Double enrichment;
+    private Double enrichment;
     @Column
-    private final Double termalCapacity;
+    private Double termalCapacity;
     @Column
-    private final Double electricalCapacity;
+    private Double electricalCapacity;
     @Column
-    private final Double lifeTime;
+    private Double lifeTime;
     @Column
-    private final Double firstLoad;
+    private Double firstLoad;
     private String source;
+    
+    public ReactorType() {}
     
     @JsonCreator
     public ReactorType(@JsonProperty("class")
@@ -73,6 +78,8 @@ public class ReactorType {
         this.lifeTime = lifeTime;
         this.firstLoad = firstLoad;
     }
+    
+    
     
     public String getName() {
         return name;
@@ -121,6 +128,7 @@ public class ReactorType {
     public void setSource(String source){
         this.source = source;
     }
+    
     
     public String[] getAtrributes() {
         return new String[] { name, 

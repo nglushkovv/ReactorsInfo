@@ -2,3 +2,6 @@ target/
 target
 lib/
 ReactorsInfo.db
+ReactorsInfo.mv.zip
+ReactorsInfo.db.trace
+src/main/resources/driver/

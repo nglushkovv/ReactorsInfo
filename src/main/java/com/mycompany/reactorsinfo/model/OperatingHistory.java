@@ -8,32 +8,39 @@ import java.time.Year;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.Getter;
 
 /**
  *
  * @author 79175
  */
 @Entity
+@Getter
 @Table(name="OperatingHistory")
+@IdClass(OperatingHistoryPK.class)
 public class OperatingHistory {
     @Id
-    @OneToMany
-    @JoinColumn(name = "reactor")
+    @ManyToOne
+    @JoinColumn()
     private Reactor reactor;
     @Id
-    private Year year;
+    private Integer operatingYear;
     @Column(name = "annual_load_factor")
-    private Double annualLoadFactor;
+    private Double annualOperatingHistory;
+    
+    public OperatingHistory(){}
     
     public OperatingHistory(Reactor reactor,
-                                   Year year,
-                                   Double annualLoadFactor) {
+                                   Integer year,
+                                   Double annualOperatingHistory) {
         this.reactor = reactor;
-        this.year = year;
-        this.annualLoadFactor = annualLoadFactor;
+        this.operatingYear = year;
+        this.annualOperatingHistory = annualOperatingHistory;
         
     }
 }
