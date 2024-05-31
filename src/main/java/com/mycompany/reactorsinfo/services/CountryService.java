@@ -15,9 +15,9 @@ import org.hibernate.Session;
  * @author 79175
  */
 public class CountryService {
-    CountryRepository repository;
+    private CountryRepository repository;
     
-    String[][] countries = {
+    private String[][] countries = {
         {"AR", "ARGENTINA", "South America"},
         {"AM", "ARMENIA", "Asia"},
         {"BY", "BELARUS", "Europe"},

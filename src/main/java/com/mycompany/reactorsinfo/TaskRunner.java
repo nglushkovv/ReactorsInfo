@@ -16,8 +16,8 @@ import org.hibernate.Session;
  * @author 79175
  */
 public class TaskRunner {
-    ReactorService reactorService;
-    CountryService countryService;
+    private ReactorService reactorService;
+    private CountryService countryService;
     
     public TaskRunner(ReactorService rs, CountryService cs) {
         this.reactorService = rs;

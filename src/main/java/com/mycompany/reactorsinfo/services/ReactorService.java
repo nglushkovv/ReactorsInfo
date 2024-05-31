@@ -9,18 +9,15 @@ import com.mycompany.reactorsinfo.model.OperatingHistory;
 import com.mycompany.reactorsinfo.model.Reactor;
 import com.mycompany.reactorsinfo.model.ReactorType;
 import com.mycompany.reactorsinfo.repository.CountryRepository;
-import com.mycompany.reactorsinfo.repository.CountryRepositoryImpl;
 import com.mycompany.reactorsinfo.repository.ReactorRepository;
 import com.mycompany.reactorsinfo.repository.ReactorRepositoryImpl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.persistence.EntityManager;
 import org.hibernate.Session;
 
 /**
