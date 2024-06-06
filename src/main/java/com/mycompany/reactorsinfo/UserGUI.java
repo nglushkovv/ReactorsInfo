@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,7 +18,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -29,8 +31,6 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  */
 public class UserGUI extends javax.swing.JFrame {
     private ManagementController managementController;
-    private Timer timer;
-    private Integer progressValue;
     private Thread mainThread = new Thread();
 
     /**
@@ -75,6 +75,7 @@ public class UserGUI extends javax.swing.JFrame {
             configureFileChooser();
             configureTree();
             configureDialog();
+            showTable.setVisible(false);
             
         } catch (IOException ex) {
             Logger.getLogger(UserGUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -166,6 +167,7 @@ public class UserGUI extends javax.swing.JFrame {
         loadFileButton = new javax.swing.JButton();
         imageLabel = new javax.swing.JLabel();
         databaseModeButton = new javax.swing.JButton();
+        showTable = new javax.swing.JButton();
 
         fileChooser.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
@@ -259,6 +261,14 @@ public class UserGUI extends javax.swing.JFrame {
         });
         mainPanel.add(databaseModeButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 20, 150, 30));
 
+        showTable.setText("Посмотреть таблицу");
+        showTable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showTableActionPerformed(evt);
+            }
+        });
+        mainPanel.add(showTable, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 20, 150, 30));
+
         getContentPane().add(mainPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 710, 460));
 
         pack();
@@ -272,6 +282,8 @@ public class UserGUI extends javax.swing.JFrame {
             if(checkDatabaseFile()) {
                 managementController.startDatabaseMode("UPDATE");
                 databaseModeDialog.setVisible(true);
+                databaseModeButton.setEnabled(false);
+                showTable.setVisible(true);
                 configureTable();
                 
             }
@@ -279,35 +291,31 @@ public class UserGUI extends javax.swing.JFrame {
                 if(mainThread != null || mainThread.isAlive()){
                     mainThread.interrupt();
                 }
-                int dialogResult = JOptionPane.showConfirmDialog(rootPane,
-                "База данных не обнаружена на локальном компьютере. "
-                        + "Хотите ли вы создать её и заполнить? (Это займёт некоторое время)", "База данных не найдена", JOptionPane.YES_NO_OPTION);
-                if(dialogResult == JOptionPane.YES_OPTION){
+                String[] choices = {"Создать новую базу данных (Займет некоторое время)", "Выбрать существующую..."};
+                Object dialogResult = JOptionPane.showInputDialog(
+                                        rootPane,
+                                        "Выбор варианта.",
+                                        "База данных не обнаружена. Выберите один из вариантов.",
+                                        JOptionPane.QUESTION_MESSAGE,
+                                        null, choices,
+                                         choices[0]);
+                if(dialogResult != null &&
+                        dialogResult.toString().equals(choices[0])){
                     if(managementController.getReactorService().getListOfReactorTypes().isEmpty()){
-                        JOptionPane.showMessageDialog(rootPane, "Ошибка."
-                                + " Перед началом загрузите информацию о типе реакторов.",
+    
+                        JOptionPane.showMessageDialog(rootPane,
+                                "Ошибка." +
+                                " Перед началом загрузите информацию о типе реакторов.",
                                 "Ошибка", JOptionPane.ERROR_MESSAGE);
-                    } else{
-                        System.out.println("Начался процесс парсинга и создания БД. В идеале он займет 16-17 минут.");
-                        mainThread = new Thread() {
-                            public void run() {
-                                try {
-                                    databaseModeButton.setEnabled(false);
-                                    managementController.startDatabaseMode("CREATE");
-                                    databaseModeDialog.setVisible(true);
-                                    configureTable();
-                                    databaseModeButton.setEnabled(true);
-                                } catch (IOException ex) {
-                                    JOptionPane.showMessageDialog(rootPane, "Ошибка."
-                    + "Непредвиденная ошибка. Попробуйте снова.", "Ошибка", JOptionPane.ERROR_MESSAGE);
-                                }
-                            }
-                        };
-                        mainThread.start();
- 
                     }
-      
+                    else {
+                        startCreatingDB();
+                        }
+                        
                     
+                } else if (dialogResult != null &&
+                        dialogResult.toString().equals(choices[1])){
+                    chooseDBFile();
                 }
                 
             }
@@ -319,12 +327,49 @@ public class UserGUI extends javax.swing.JFrame {
         } catch (RuntimeException ex) {
             JOptionPane.showMessageDialog(rootPane, "Ошибка."
                     + " База данных в данный момент уже используется.", "Ошибка", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
         }
         
     }//GEN-LAST:event_databaseModeButtonActionPerformed
 
+    private void chooseDBFile() throws IOException {
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("H2 База данных",
+                    "db");
+                fileChooser.setFileFilter(filter);
+        int returnValue = fileChooser.showOpenDialog(rootPane);
+        
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+                      File selectedFile = fileChooser.getSelectedFile();
+                      String filepath = selectedFile.getAbsolutePath();
+                      managementController.setDBPath(filepath);
+                      managementController.startDatabaseMode("UPDATE");
+                      databaseModeDialog.setVisible(true);
+                      databaseModeButton.setEnabled(false);
+                      showTable.setVisible(true);
+                      configureTable();
+                      
+                
+            }
+    }
     
+    private void startCreatingDB() {
+        System.out.println("Начался процесс парсинга и создания БД. В идеале он займет 16-17 минут.");
+        mainThread = new Thread() {
+            public void run() {
+                try {
+                    databaseModeButton.setEnabled(false);
+                    managementController.startDatabaseMode("CREATE");
+                    databaseModeDialog.setVisible(true);
+                    configureTable();
+                } catch (IOException ex) {
+                                    JOptionPane.showMessageDialog(rootPane, "Ошибка."
+                    + "Непредвиденная ошибка. Попробуйте снова.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        };
+        mainThread.start();
+ 
+        }
+      
     
     
     
@@ -332,9 +377,12 @@ public class UserGUI extends javax.swing.JFrame {
     private Boolean checkDatabaseFile() {
         try {
             
-            File dbFile = new File(getClass().getProtectionDomain()
-                    .getCodeSource().getLocation().toURI().getPath() + "../ReactorInfo.mv.db");
-            if(dbFile.exists()){
+            String jarPath = new File(this.getClass().
+                    getProtectionDomain().getCodeSource().getLocation().toURI()).getPath();
+            String jarDir = new File(jarPath).getParent();
+            String fileName = "ReactorInfo.mv.db";
+            Path filePath = Paths.get(jarDir, fileName);
+            if(Files.exists(filePath)){
                 return true;
             }
             else{
@@ -342,7 +390,7 @@ public class UserGUI extends javax.swing.JFrame {
             }
             
             
-        } catch (URISyntaxException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(UserGUI.class.getName()).log(Level.SEVERE, null, ex);
             
         }
@@ -356,6 +404,10 @@ public class UserGUI extends javax.swing.JFrame {
     
     
     private void loadFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFileButtonActionPerformed
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Языки разметки",
+                    "json", "xml", "yaml");
+        fileChooser.setFileFilter(filter);
+        
         int returnValue = fileChooser.showOpenDialog(rootPane);
         
         if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -382,6 +434,10 @@ public class UserGUI extends javax.swing.JFrame {
         mainThread.interrupt();
     }//GEN-LAST:event_dropProcessButtonActionPerformed
 
+    private void showTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTableActionPerformed
+        databaseModeDialog.setVisible(true);
+    }//GEN-LAST:event_showTableActionPerformed
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -399,6 +455,7 @@ public class UserGUI extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> optionsComboBox;
     private javax.swing.JLabel reactorsInfoLabel;
     private javax.swing.JScrollPane scrollPaneDialog;
+    private javax.swing.JButton showTable;
     private javax.swing.JScrollPane treeTabPanel;
     private javax.swing.JDialog workingDialog;
     private javax.swing.JLabel workingPic;

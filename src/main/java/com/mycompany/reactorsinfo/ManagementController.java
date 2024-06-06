@@ -31,6 +31,7 @@ public final class ManagementController {
     private final WebReader webReader;
     private Boolean databaseMode = false;
     private TaskRunner taskRunner;
+    private String DBPath;
     
     public ManagementController() {
         jsonHandler = new JSONHandler();
@@ -44,10 +45,10 @@ public final class ManagementController {
     
     public void startDatabaseMode(String mode) throws IOException {
         databaseMode = true;
-        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        Session session = HibernateSessionFactoryUtil.getSessionFactory(DBPath).openSession();
         reactorService.createReactorsRepository(session);
         countryService.createCountryRepository(session);
-        taskRunner = new TaskRunner(reactorService, countryService);
+        taskRunner = new TaskRunner();
         
         switch(mode){
 
@@ -65,8 +66,9 @@ public final class ManagementController {
                 reactorService.addTypesToRepository();
                 break;
         }
-            
+            session.close();
         }
+    
     
     
     
@@ -95,6 +97,10 @@ public final class ManagementController {
     
     public TaskRunner getTaskRunner() {
         return taskRunner;
+    }
+    
+    public void setDBPath(String filepath) {
+        this.DBPath = filepath;
     }
     
 }

@@ -7,7 +7,6 @@ package com.mycompany.reactorsinfo.services;
 import com.mycompany.reactorsinfo.model.Country;
 import com.mycompany.reactorsinfo.repository.CountryRepository;
 import com.mycompany.reactorsinfo.repository.CountryRepositoryImpl;
-import javax.persistence.EntityManager;
 import org.hibernate.Session;
 
 /**

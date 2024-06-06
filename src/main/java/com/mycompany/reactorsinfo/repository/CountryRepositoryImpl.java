@@ -6,7 +6,6 @@ package com.mycompany.reactorsinfo.repository;
 
 import com.mycompany.reactorsinfo.model.Country;
 import java.util.List;
-import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;

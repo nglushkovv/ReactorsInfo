@@ -5,8 +5,6 @@
 package com.mycompany.reactorsinfo;
 
 import com.mycompany.reactorsinfo.DBUtil.HibernateSessionFactoryUtil;
-import com.mycompany.reactorsinfo.services.CountryService;
-import com.mycompany.reactorsinfo.services.ReactorService;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import org.hibernate.Session;
@@ -16,19 +14,13 @@ import org.hibernate.Session;
  * @author 79175
  */
 public class TaskRunner {
-    private ReactorService reactorService;
-    private CountryService countryService;
-    
-    public TaskRunner(ReactorService rs, CountryService cs) {
-        this.reactorService = rs;
-        this.countryService = cs;
-    }
+
     
     public DefaultTableModel prepareTableModel(int type) {
-   Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
-    session.beginTransaction();
-    String hql = "";
-    String[] columnNames = {};
+        Session session = HibernateSessionFactoryUtil.getSessionFactory("").openSession();
+        session.beginTransaction();
+        String hql = "";
+        String[] columnNames = {};
 
     switch(type) {
         case 0:

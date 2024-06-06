@@ -4,10 +4,6 @@
  */
 package com.mycompany.reactorsinfo.DBUtil;
 
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -22,31 +18,37 @@ public class HibernateSessionFactoryUtil {
 
     private HibernateSessionFactoryUtil() {}
 
-    public static SessionFactory getSessionFactory() {
+    public static SessionFactory getSessionFactory(String DBPath) {
         if (sessionFactory == null) {
             
             try {
-                Configuration configuration = new Configuration().configure();
+                Configuration configuration;
+                if(DBPath == null) 
+                    configuration = new Configuration().configure();
+                else {
+
+                configuration = new Configuration().configure()
+                    .setProperty("hibernate.connection.url", "jdbc:h2:" +
+                            DBPath.substring(0, (DBPath.indexOf("."))))
+                        .setProperty("hibernate.hbm2ddl.auto", "update");
+                            
+                
+                }
+               
+                
                 sessionFactory = configuration.buildSessionFactory();
                 sessionFactory.getCache().evictAllRegions();
 
 
-            } catch (HibernateException e) {;
+            } catch (HibernateException e) {
                 throw new RuntimeException();
             }
         }
         return sessionFactory;
     }
-     private static EntityManagerFactory buildEntityManagerFactory() {
-        try {
-            // Create the EntityManagerFactory from hibernate.cfg.xml
-            return Persistence.createEntityManagerFactory("hibernate.cfg.xml");
-        } catch (Throwable ex) {
-            // Make sure you log the exception, as it might be swallowed
-            System.err.println("Initial EntityManagerFactory creation failed." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-    }
+    
+    
+    
 
      
 }

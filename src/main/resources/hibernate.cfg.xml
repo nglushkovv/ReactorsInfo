@@ -12,20 +12,15 @@
         <property name="hibernate.current_session_context_class">thread</property>
 
 
-        <!-- JDBC connection pool settings (use the built-in) -->
-        <!-- <property name="hibernate.connection.pool_size">1</property> -->
 
-        <!-- Specifies the SQL dialect -->
         <property name="dialect">org.hibernate.dialect.H2Dialect</property>
 
-        <!-- Echo all executed SQL to stdout -->
+
         <property name="show_sql">false</property>
 
-        <!-- Drop and re-create the database schema on startup -->
         <property name="hbm2ddl.auto">update</property>
 
-        <!-- Mapping files -->
-        <!-- Add your mapping files here -->
+
         <mapping class="com.mycompany.reactorsinfo.model.Country"/>
 	<mapping class="com.mycompany.reactorsinfo.model.ReactorType"/>
         <mapping class="com.mycompany.reactorsinfo.model.Reactor"/>  
